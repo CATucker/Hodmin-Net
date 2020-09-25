@@ -1,0 +1,50 @@
+﻿@page "/nodelist"
+
+@using HomieNodeManager.Data
+
+<h3>Node List</h3>
+
+@if (foundNodes == null)
+{
+    <p><em>Loading Nodes...</em></p>
+}
+else
+{
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>MAC</th>
+                <th>Online</th>
+                <th>IP Addr</th>
+                <th>Name</th>
+                <th>FW Checksum</th>
+                <th>FW Name</th>
+                <th>FW Version</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var nodeItem in foundNodes)
+            {
+            <tr>
+                    <td>@nodeItem.MAC</td>
+                    <td class="text-center @(nodeItem.Online == "true" ? "bg-success" : "bg-warning")"><span class="oi @(nodeItem.Online == "true" ? "oi-circle-check" : "oi-circle-x")"></span> </td>
+                    <td>@nodeItem.LocalIP</td>
+                    <td>@nodeItem.Name</td>
+                    <td>@nodeItem.FirmwareChecksum</td>
+                    <td>@nodeItem.FirmwareName</td>
+                    <td>@nodeItem.FirmwareVerison</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<NodeDeviceProperties> foundNodes = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        foundNodes = await NodeListService.GetNodesAsync(Program.ConfigValues);
+    }
+}
+

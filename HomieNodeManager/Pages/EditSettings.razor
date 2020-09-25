@@ -1,0 +1,134 @@
+﻿@page "/editsettings"
+
+<div class="page-header">
+    <h2>@Program.applicationName Settings</h2>
+</div>
+
+<div class="container" style="padding:10px 10px;">
+<form class="form-inline">
+
+    <fieldset class="outerborder">        
+    <legend class="outerborder">MQTT Host</legend>
+        
+            <div class="form-group">
+                <label class="control-label col-sm-2">Protocol:</label>
+                <input type="text" class="form-control" id="MQTTProtocol" @bind="configValues.mqtt.protocol">
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-2">Host:</label>
+                <input type="text" class="form-control" id="MQTTHost" placeholder="MQTT Host Name or IP Address" @bind="configValues.mqtt.host">
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label col-sm-1">Port:</label>
+                <input type="number" class="form-control" id="MQTTPort" placeholder="MQTT Port Number" @bind="configValues.mqtt.port">
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-1">Base Topic:</label>
+                <input type="text" class="form-control" id="MQTTBaseTopic" @bind="configValues.mqtt.base_topic">
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-1">time</label>
+                <input type="number" class="form-control" id="MQTTTimeout" @bind="configValues.mqtt.timeout">
+            </div>
+        </fieldset>
+
+        <fieldset class="outerborder">        
+                <legend class="outerborder">MQTT Auth</legend>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">Requires Authentication:</label>
+                    <input type="checkbox" class="form-control col-sm-1" id="MQTTRequireAuth" @bind="configValues.mqtt.auth">
+                </div>
+
+                @if(configValues.mqtt.auth == true)
+                {
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Username:</label>
+                    <input type="text" class="form-control col-sm-3" id="MQTTAuthUser" @bind="configValues.mqtt.user">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Password:</label>
+                    <input type="password" class="form-control col-sm-3" id="MQTTAuthPass" @bind="configValues.mqtt.password">
+                </div>
+                }
+        </fieldset>
+</form>
+    
+
+
+        @*    <div class="form-group">
+            <label class="control-label col-sm-2" for="email">Config JSON:</label>
+            <div class="col-sm-10">
+                <input type="textarea" class="form-control" id="ConfigJSON" placeholder="{ConfigJSON}" @bind="ConfigJSON">
+            </div>
+        </div>*@
+
+
+        @*<div class="form-group">
+            <label class="control-label col-sm-2" for="pwd">Password:</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                    <label><input type="checkbox"> Remember me</label>
+                </div>
+            </div>
+        </div>
+        *@
+    
+
+    <div class="col-sm-offset-2 col-sm-10">
+        <button @onclick="@SaveChanges" class="btn btn-success">Save Changes</button>
+        <button class="btn btn-primary" @onclick="@ModalShow">Cancel</button>
+    </div>
+</div>
+
+@if (showModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm Cancel</h4>
+                    <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel and lose any changes?</p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn" @onclick="@ModalCancel">Nevermind</button>
+                    <button type="button" class="btn btn-danger" @onclick=@CancelChanges>Undo Changes</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@code {
+   
+    bool showModal = false;
+    void ModalShow() => showModal = true;
+    void ModalCancel() => showModal = false;
+
+    
+
+
+}
