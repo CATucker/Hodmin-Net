@@ -40,13 +40,10 @@ namespace HomieNodeManager.Data
                 .WithCleanSession(); ;
 
 
-            int portNumber = 1883;
-            int.TryParse(configValues.mqtt.port, out portNumber);
+            options.WithTcpServer(configValues.mqtt.host, configValues.mqtt.port);
 
-
-            options.WithTcpServer(configValues.mqtt.host, portNumber);
-
-            //TODO: Other settings here
+            //TODO: Other settings here, like timeout
+            options.WithCommunicationTimeout(new TimeSpan(0,0,0,0, (int)(configValues.mqtt.timeout * 1000) ));
 
             var _opts = options.Build();
 

@@ -22,15 +22,13 @@ namespace HomieNodeManager
 
         public static void Main(string[] args)
         {
-            ConfigValues =  GetConfiguration();
+            LoadConfiguration();
 
             if (ConfigValues.mqtt == null)
             {
                 Console.WriteLine("No Configuration Available, quitting.");
                 return;
             }
-
-
 
             CreateHostBuilder(args).Build().Run();
         }
@@ -45,30 +43,44 @@ namespace HomieNodeManager
 
 
 
-
-
-
         //  ------------------------------------------------------------------
         /// <summary>                                                         
         /// Retrieve the configuration from the config files
         /// </summary>                                                        
         // -------------------------------------------------------------------
-        public static AppConfigValues GetConfiguration()
+        public static void LoadConfiguration()
         {
-            AppConfigValues _retVal = null;
-
             try
             {
                 String configText = System.IO.File.ReadAllText("configuration.json");
-                _retVal = JsonSerializer.Deserialize<AppConfigValues>(configText);
+                ConfigValues = JsonSerializer.Deserialize<AppConfigValues>(configText);
             }
             catch (FileNotFoundException fnf)
             {
                 // file wasn't found
                 Console.WriteLine($"<f:red>ERROR: Configuration File Not Found {fnf.FileName}");
             }
+        }
 
-            return _retVal;
+        //  ------------------------------------------------------------------
+        /// <summary>                                                         
+        /// Retrieve the configuration from the config files
+        /// </summary>                                                        
+        // -------------------------------------------------------------------
+        public static string SaveConfiguration(string newJSONValues)
+        {
+            try
+            {
+                System.IO.File.WriteAllText("configuration.json", newJSONValues);
+            }
+            catch (Exception  except)
+            {
+                string message = $"Error Saving Configuration: {except.Message}";
+                Console.WriteLine(message);
+                return message;
+            }
+
+            return null;
         }
 
     }

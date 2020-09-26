@@ -20,13 +20,13 @@ namespace HomieNodeManager.Data
     {
         public string protocol { get; set; }
         public string host { get; set; }
-        public string port { get; set; }
+        public int port { get; set; }
 
         public bool auth { get; set; }
         public string user { get; set; }
         public string password { get; set; }
         public string base_topic { get; set; }
-        public string timeout { get; set; }
+        public float timeout { get; set; }
     }
 
     public class Firmware

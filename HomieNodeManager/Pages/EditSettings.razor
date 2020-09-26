@@ -1,95 +1,100 @@
 ﻿@page "/editsettings"
+<h3>Edit Settings</h3>
 
-<div class="page-header">
-    <h2>@Program.applicationName Settings</h2>
-</div>
+<EditForm Model=@configValues OnSubmit=@FormSubmitted class="form-horizontal">
+    <div class="row">
+        <div class="col-md-6">
+            <fieldset class="form-fieldset">
+                <legend class="form-legend">MQTT Host Settings</legend>
+                <div>
+                    <div class="form-group">
+                        <label for="mqttProtocol">Protocol:</label>
+                        <InputText @bind-Value=configValues.mqtt.protocol id="mqttProtocol" class="form-control" aria-describedby="protocolHelp" placeholder="MQTT Protocol" />
+                        <small id="protocolHelp" class="form-text text-muted">MQTT Protocol to use.  <em>mqtt://</em> by default</small>
+                    </div>
 
-<div class="container" style="padding:10px 10px;">
-<form class="form-inline">
+                    <div class="form-group">
+                        <label for="mqttHost">Host:</label>
+                        <InputText @bind-Value=configValues.mqtt.host id="mqttHost" class="form-control" aria-describedby="hostHelp" placeholder="Enter MQTT Host Name or IP Address" />
+                        <small id="hostHelp" class="form-text text-muted">Host name or IP Address for your MQTT server</small>
+                    </div>
 
-    <fieldset class="outerborder">        
-    <legend class="outerborder">MQTT Host</legend>
-        
-            <div class="form-group">
-                <label class="control-label col-sm-2">Protocol:</label>
-                <input type="text" class="form-control" id="MQTTProtocol" @bind="configValues.mqtt.protocol">
-            </div>
+                    <div class="form-group">
+                        <label for="mqttPort">Port:</label>
+                        <InputNumber @bind-Value=configValues.mqtt.port id="mqttPort" class="form-control" aria-describedby="portHelp" placeholder="Enter MQTT Port Number" />
+                        <small id="portHelp" class="form-text text-muted">Port number for your MQTT server, 1883 is the default</small>
+                    </div>
 
-            <div class="form-group">
-                <label class="control-label col-sm-2">Host:</label>
-                <input type="text" class="form-control" id="MQTTHost" placeholder="MQTT Host Name or IP Address" @bind="configValues.mqtt.host">
-            </div>
-            
-            <div class="form-group">
-                <label class="control-label col-sm-1">Port:</label>
-                <input type="number" class="form-control" id="MQTTPort" placeholder="MQTT Port Number" @bind="configValues.mqtt.port">
-            </div>
 
-            <div class="form-group">
-                <label class="control-label col-sm-1">Base Topic:</label>
-                <input type="text" class="form-control" id="MQTTBaseTopic" @bind="configValues.mqtt.base_topic">
-            </div>
+                    <div class="form-group">
+                        <label for="mqttBaseTopic">Base Topic:</label>
+                        <InputText @bind-Value=configValues.mqtt.base_topic id="mqttBaseTopic" class="form-control" aria-describedby="topicHelp" placeholder="Default Topic" />
+                        <small id="topicHelp" class="form-text text-muted">Base topic used by your Homie devices</small>
+                    </div>
 
-            <div class="form-group">
-                <label class="control-label col-sm-1">time</label>
-                <input type="number" class="form-control" id="MQTTTimeout" @bind="configValues.mqtt.timeout">
-            </div>
-        </fieldset>
 
-        <fieldset class="outerborder">        
-                <legend class="outerborder">MQTT Auth</legend>
-                <div class="form-group">
-                    <label class="control-label col-sm-3">Requires Authentication:</label>
-                    <input type="checkbox" class="form-control col-sm-1" id="MQTTRequireAuth" @bind="configValues.mqtt.auth">
+                    <div class="form-group">
+                        <label for="mqttTimeout">Connection Timeout:</label>
+                        <InputNumber @bind-Value=configValues.mqtt.timeout class="form-control" id="mqttTimeout" aria-describedby="timeoutHelp" placeholder="defaults to .3 seconds" />
+                        <small id="timeoutHelp" class="form-text text-muted">Connection Timeout, defaults to .3 seconds</small>
+                    </div>
                 </div>
-
-                @if(configValues.mqtt.auth == true)
-                {
-
-                <div class="form-group">
-                    <label class="control-label col-sm-2">Username:</label>
-                    <input type="text" class="form-control col-sm-3" id="MQTTAuthUser" @bind="configValues.mqtt.user">
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-2">Password:</label>
-                    <input type="password" class="form-control col-sm-3" id="MQTTAuthPass" @bind="configValues.mqtt.password">
-                </div>
-                }
-        </fieldset>
-</form>
-    
-
-
-        @*    <div class="form-group">
-            <label class="control-label col-sm-2" for="email">Config JSON:</label>
-            <div class="col-sm-10">
-                <input type="textarea" class="form-control" id="ConfigJSON" placeholder="{ConfigJSON}" @bind="ConfigJSON">
-            </div>
-        </div>*@
-
-
-        @*<div class="form-group">
-            <label class="control-label col-sm-2" for="pwd">Password:</label>
-            <div class="col-sm-10">
-                <input type="password" class="form-control" id="pwd" placeholder="Enter password">
-            </div>
+            </fieldset>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <div class="checkbox">
-                    <label><input type="checkbox"> Remember me</label>
+        <div class="col-md-6">
+
+            <fieldset class="form-fieldset">
+                <legend class="form-legend">MQTT Auth Settings</legend>
+                <div>
+
+                    <div class="form-check">
+                        <InputCheckbox class="form-check-input" id="mqttHasAuth" @bind-Value=configValues.mqtt.auth />
+                        <label class="form-check-label" for="mqttHasAuth">MQTT Auth Required?</label>
+                    </div>
+
+
+                    @if (configValues.mqtt.auth == true)
+                    {
+
+                        <div class="form-group">
+                            <label for="mqttAuthUser">Username:</label>
+                            <InputText id="mqttAuthUser" class="form-control" @bind-Value=configValues.mqtt.user />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mqttAuthPassword">Password:</label>
+                            <InputText type="password" class="form-control" @bind-Value=configValues.mqtt.password />
+                        </div>
+                    }
+
+
                 </div>
-            </div>
+            </fieldset>
+
+
         </div>
-        *@
-    
+    </div>
+
+
 
     <div class="col-sm-offset-2 col-sm-10">
-        <button @onclick="@SaveChanges" class="btn btn-success">Save Changes</button>
-        <button class="btn btn-primary" @onclick="@ModalShow">Cancel</button>
+        <input type="submit" value="Save Changes" class="btn btn-success" />
+        <input type="button" value="Cancel" class="btn btn-primary" @onclick="@ModalShow" />
     </div>
-</div>
+
+
+</EditForm>
+
+
+
+
+@if (SaveStyle != SAVECLR)
+{
+    <div class="alert @SaveStyle" role="alert">
+        @SaveStatus
+    </div>
+}
+
 
 @if (showModal)
 {
@@ -117,18 +122,5 @@
             </div>
         </div>
     </div>
-
-}
-
-
-
-@code {
-   
-    bool showModal = false;
-    void ModalShow() => showModal = true;
-    void ModalCancel() => showModal = false;
-
-    
-
 
 }

@@ -4,11 +4,21 @@
 
 <h3>Node List</h3>
 
-@if (foundNodes == null)
+@if (loadErrorMessage != null)
 {
-    <p><em>Loading Nodes...</em></p>
+    <div class="alert alert-danger" role="alert">
+        @loadErrorMessage
+    </div>
 }
-else
+
+@if (foundNodes == null && loadErrorMessage == null)
+{
+    <div class="alert alert-primary" role="alert">
+        Loading Nodes...
+    </div>
+}
+
+@if (foundNodes != null)
 {
     <table class="table table-sm table-bordered">
         <thead>
@@ -42,9 +52,21 @@ else
 @code {
     private List<NodeDeviceProperties> foundNodes = null;
 
+    string loadErrorMessage = null;
+
     protected override async Task OnInitializedAsync()
     {
+        try {
         foundNodes = await NodeListService.GetNodesAsync(Program.ConfigValues);
+        }
+        catch(MQTTnet.Exceptions.MqttCommunicationTimedOutException exTimeout)
+        {
+            loadErrorMessage = $"ERROR: Timeout connecting to Server, check configuration settings";
+        }
+        catch(Exception err)
+        {
+            loadErrorMessage = "ERROR: " + err.Message;
+        }
     }
 }
 
