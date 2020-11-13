@@ -1,6 +1,7 @@
 ﻿@page "/nodelist"
 
 @using HomieNodeManager.Data
+@inject NavigationManager NavMan
 
 <h3>Node List</h3>
 
@@ -23,6 +24,7 @@
     <table class="table table-sm table-bordered">
         <thead>
             <tr>
+                <th>Actions</th>
                 <th>MAC</th>
                 <th>Online</th>
                 <th>IP Addr</th>
@@ -30,12 +32,18 @@
                 <th>FW Checksum</th>
                 <th>FW Name</th>
                 <th>FW Version</th>
+                <th>HW Type</th>
+                <th>Homie Ver</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var nodeItem in foundNodes)
             {
-            <tr>
+                <tr>
+                    <td>
+                        <div class="btn btn-sm btn-info" @onclick=@(()=> nodeItem.isConfigShown = !nodeItem.isConfigShown )>CFG</div>
+                        <div class="btn btn-sm btn-info" @onclick=@(() => GoToPeek(nodeItem.TopicKey))>PEEK</div>
+                    </td>
                     <td>@nodeItem.MAC</td>
                     <td class="text-center @(nodeItem.Online == "true" ? "bg-success" : "bg-warning")"><span class="oi @(nodeItem.Online == "true" ? "oi-circle-check" : "oi-circle-x")"></span> </td>
                     <td>@nodeItem.LocalIP</td>
@@ -43,7 +51,19 @@
                     <td>@nodeItem.FirmwareChecksum</td>
                     <td>@nodeItem.FirmwareName</td>
                     <td>@nodeItem.FirmwareVerison</td>
-            </tr>
+                    <td>@nodeItem.implmentation</td>
+                    <td>@nodeItem.HomieVersion</td>
+                </tr>
+                <tr class="panel @(nodeItem.isConfigShown? "": "collapse")">
+                    <td></td>
+                    <td colspan="5">
+                        <textarea rows="10" cols="80">@nodeItem.config</textarea>
+                    </td>
+                    <td colspan="2">
+                        <div class="btn btn-success">Submit Changes</div>
+                        <div class="btn btn-outline-danger">Cancel</div>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -56,17 +76,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try {
-        foundNodes = await NodeListService.GetNodesAsync(Program.ConfigValues);
-        }
-        catch(MQTTnet.Exceptions.MqttCommunicationTimedOutException exTimeout)
+        try
         {
-            loadErrorMessage = $"ERROR: Timeout connecting to Server, check configuration settings";
+            foundNodes = await NodeListService.GetNodesAsync(Program.ConfigValues);
         }
-        catch(Exception err)
+        catch (MQTTnet.Exceptions.MqttCommunicationTimedOutException exTimeout)
+        {
+            loadErrorMessage = $"ERROR: Timeout connecting to Server, check configuration settings.  " + exTimeout.Message;
+        }
+        catch (Exception err)
         {
             loadErrorMessage = "ERROR: " + err.Message;
         }
     }
+
+
+    private void GoToPeek(string baseTopic)
+    {
+        NavMan.NavigateTo("/mqttpeek/" + System.Web.HttpUtility.UrlEncode(baseTopic));
+    }
+
+
+    private void showConfig(string MAC)
+    {
+
+    }
+
 }
 

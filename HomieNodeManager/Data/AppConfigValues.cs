@@ -38,6 +38,8 @@ namespace HomieNodeManager.Data
     public class Logging
     {
         public string logdestination { get; set; }
+
+        public bool isverbose { get; set; }
     }
 
     public class Output

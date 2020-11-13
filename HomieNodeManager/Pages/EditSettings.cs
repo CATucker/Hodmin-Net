@@ -26,9 +26,16 @@ namespace HomieNodeManager.Pages
         /// Handle the Confimation Dialog
         /// </summary>                                                        
         // -------------------------------------------------------------------
-        bool showModal = false;
-        void ModalShow() => showModal = true;
-        void ModalCancel() => showModal = false;
+        private bool showModal = false;
+        void ModalShow()
+        {
+            showModal = true;
+        }
+
+        void ModalCancel()
+        {
+            showModal = false;
+        }
 
 
 

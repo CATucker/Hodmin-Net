@@ -70,5 +70,15 @@ namespace HomieNodeManager.Data
         public string implmentation { get; set; }
         public string config { get; set; }
 
+
+
+
+
+
+
+
+        // ViewModel Properties
+        public bool isConfigShown { get; set; } = false;
+
     }
 }

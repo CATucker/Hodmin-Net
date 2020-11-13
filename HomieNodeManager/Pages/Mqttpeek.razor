@@ -1,0 +1,106 @@
+﻿@page "/mqttpeek"
+@page "/mqttpeek/{baseTopic}"
+
+@inject HomieNodeManager.Data.IMqttMessageReceivedService MqttService
+@implements IDisposable
+
+
+
+<h3>MQTT Monitor</h3>
+<div>Service ID: @MqttService.ServiceID.ToString()</div>
+
+<button @onclick="ClearEventsClicked">Clear Messages</button>
+
+<ul>
+    @if (messages != null)
+    {
+        foreach (var msg in messages.ToArray())
+        {
+        <li>
+            <div>
+                <span>@msg.Topic</span>
+                <span>@msg.Payload</span>
+            </div>
+        </li>
+        }
+    }
+    else
+    {
+        <div>No Messages</div>
+    }
+</ul>
+
+
+@code {
+
+
+        IList<HomieNodeManager.Data.MQTTRawMessage> messages;
+
+
+
+
+    protected override void OnInitialized()
+    {
+
+        if (!this.MqttService.IsListening)
+        {
+            // Subscription to MQTT Monitor Events
+            this.MqttService.OnMqttMessage += ReceivedNewMessage;
+            messages = new List<HomieNodeManager.Data.MQTTRawMessage>();
+            MqttService.StartListening(BaseTopic);
+        }
+
+    }
+
+    //  ------------------------------------------------------------------
+    /// <summary>                                                         
+    /// Base Topic Value
+    /// </summary>                                                        
+    // -------------------------------------------------------------------
+    [Parameter]
+    public string BaseTopic { get; set; }
+
+
+
+
+    //  ------------------------------------------------------------------
+    /// <summary>                                                         
+    /// Handles Clear the events button click
+    /// </summary>                                                        
+    // -------------------------------------------------------------------
+    void ClearEventsClicked()
+    {
+        if (messages != null)
+            messages.Clear();
+    }
+
+
+    // The event handler, will update the HTML view according to new stock value
+    private async void ReceivedNewMessage(object sender, HomieNodeManager.Data.MqttMessageReceivedEventArgs args)
+    {
+        messages.Add(args.NewMessage);
+
+        //var recordToupdate = this.stocks.FirstOrDefault(x => x.Code == args.NewValue.Code);
+
+        //if (recordToupdate == null)
+        //{
+        //    this.stocks.Add(args.NewValue);
+        //}
+        //else
+        //{
+        //    recordToupdate.Price = args.NewValue.Price;
+        //}
+
+        await InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        this.MqttService.OnMqttMessage -= this.ReceivedNewMessage;
+    }
+
+
+}
