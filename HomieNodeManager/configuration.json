@@ -1,0 +1,25 @@
+{
+  "mqtt": {
+    "protocol": "mqtt://",
+    "host": "192.168.0.204",
+    "port": 1883,
+    "auth": false,
+    "user": "TheUsername",
+    "password": "ThePassword",
+    "base_topic": "devices",
+    "timeout": 0.3
+  },
+  "firmware": {
+    "dir": ".\\HomieFirmware",
+    "filepattern": "*.*"
+  },
+  "logging": {
+    "logdestination": "none",
+    "isverbose": false
+
+  },
+  "output": {
+    "list": "mac online localip name checksum fw_name fw_version",
+    "nil": "[N/A]"
+  }
+}
